@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Builder</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(270deg, #ffecd2, #fcb69f, #ff9a9e, #a18cd1, #fbc2eb);
+      background-size: 1000% 1000%;
+      animation: gradientShift 20s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    main {
+      background-color: rgba(255, 255, 255, 0.95);
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 900px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    h2, h3, h4 {
+      color: #1e3a8a;
+    }
+    fieldset {
+      border: 2px solid #3b82f6;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+    }
+    legend {
+      font-weight: bold;
+      padding: 0 10px;
+      color: #1d4ed8;
+    }
+    .resume-section {
+      margin-bottom: 1rem;
+    }
+    .resume-section h4 {
+      margin-bottom: 0.5rem;
+      text-decoration: underline;
+      color: #2563eb;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    input, textarea, button, label {
+      display: block;
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    #resumeOutput {
+      border: 2px solid #94a3b8;
+      border-radius: 10px;
+      background: #f1f5f9;
+      padding: 1rem;
+      text-align: left;
+    }
+    #resumeText {
+      width: 100%;
+    }
+    .resume-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    #displayPhoto {
+      width: 120px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-top: 0.5rem;
+    }
+    .resume-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>Fill Your Details</h2>
+    <form id="resumeForm">
+      <fieldset>
+        <legend>Personal Information</legend>
+        <input type="text" placeholder="Full Name" name="name" required />
+        <input type="text" placeholder="Email Address" name="email" required />
+        <input type="text" placeholder="Phone Number" name="phone" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Job Information</legend>
+        <input type="text" placeholder="Job Role" name="role" required />
+        <input type="number" placeholder="Experience (years)" name="experience" required />
+        <input type="text" placeholder="Skills (comma separated)" name="skills" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Education - Graduation</legend>
+        <input type="text" placeholder="Graduation (e.g. B.Tech - CSE)" name="graduation" required />
+        <input type="text" placeholder="Graduation Institute" name="gradInstitute" required />
+        <input type="text" placeholder="Graduation Year" name="gradYear" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Education - Intermediate</legend>
+        <input type="text" placeholder="Intermediate (e.g. MPC)" name="intermediate" required />
+        <input type="text" placeholder="Intermediate College" name="interCollege" required />
+        <input type="text" placeholder="Intermediate Year" name="interYear" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Education - SSC</legend>
+        <input type="text" placeholder="SSC / 10th School" name="sscSchool" required />
+        <input type="text" placeholder="SSC Year" name="sscYear" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Photo</legend>
+        <label for="photoInput">Upload a Photo:</label>
+        <input type="file" name="photo" accept="image/*" id="photoInput" required />
+      </fieldset>
+
+      <button type="button" onclick="generateResume()">Generate Resume</button>
+    </form>
+
+    <section id="resumeOutput" style="display: none;">
+      <div class="resume-header">
+        <div class="resume-title" id="resumeTitle"></div>
+        <img id="displayPhoto" src="" alt="Uploaded Photo" />
+      </div>
+      <div id="resumeText"></div>
+    </section>
+  </main>
+
+  <script>
+    async function generateResume() {
+      const form = document.forms['resumeForm'];
+      const name = form['name'].value.trim();
+      const email = form['email'].value.trim();
+      const phone = form['phone'].value.trim();
+      const role = form['role'].value.trim();
+      const experience = form['experience'].value.trim();
+      const skills = form['skills'].value.split(',').map(s => s.trim()).filter(Boolean);
+
+      const graduation = form['graduation'].value.trim();
+      const gradInstitute = form['gradInstitute'].value.trim();
+      const gradYear = form['gradYear'].value.trim();
+      const intermediate = form['intermediate'].value.trim();
+      const interCollege = form['interCollege'].value.trim();
+      const interYear = form['interYear'].value.trim();
+      const sscSchool = form['sscSchool'].value.trim();
+      const sscYear = form['sscYear'].value.trim();
+
+      const photoInput = document.getElementById('photoInput');
+
+      if (!name || !email || !phone || !role || !experience || !skills.length || !graduation || !gradInstitute || !gradYear || !intermediate || !interCollege || !interYear || !sscSchool || !sscYear || !photoInput.files.length) {
+        alert('Please fill all fields correctly and upload a photo.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const photoDataUrl = reader.result;
+        document.getElementById('displayPhoto').src = photoDataUrl;
+        document.getElementById('resumeTitle').textContent = name;
+
+        try {
+          const res = await fetch('http://localhost:3000/api/ai-summary', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role, experience, skills })
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            const resumeHTML = `
+              <div class="resume-section">
+                <h4>Personal Information</h4>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+              </div>
+              <div class="resume-section">
+                <h4>Job Information</h4>
+                <p><strong>Role:</strong> ${role}</p>
+                <p><strong>Experience:</strong> ${experience} years</p>
+                <p><strong>Skills:</strong> ${skills.join(', ')}</p>
+              </div>
+              <div class="resume-section">
+                <h4>Education</h4>
+                <p><strong>Graduation:</strong> ${graduation}, ${gradInstitute}, ${gradYear}</p>
+                <p><strong>Intermediate:</strong> ${intermediate}, ${interCollege}, ${interYear}</p>
+                <p><strong>SSC:</strong> ${sscSchool}, ${sscYear}</p>
+              </div>
+              <div class="resume-section">
+                <h4>Professional Summary</h4>
+                <p>${data.summary}</p>
+              </div>
+            `;
+            document.getElementById('resumeText').innerHTML = resumeHTML;
+            document.getElementById('resumeOutput').style.display = 'block';
+          } else {
+            document.getElementById('resumeText').innerText = data.error || 'Error generating summary.';
+          }
+        } catch (err) {
+          console.error(err);
+          document.getElementById('resumeText').innerText = 'Network error. Please make sure the server is running.';
+        }
+      };
+
+      reader.readAsDataURL(photoInput.files[0]);
+    }
+  </script>
+</body>
+</html>
